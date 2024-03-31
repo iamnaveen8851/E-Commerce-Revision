@@ -1,0 +1,14 @@
+.flex{
+    display:  flex;
+    gap : 5px;
+    justify-content: space-around;
+    margin: auto;
+}
+
+.flex img{
+    width: 250px;
+}
+
+.flex > div{
+    /* border: 1px solid black; */
+}

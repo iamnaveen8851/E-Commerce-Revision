@@ -1,0 +1,13 @@
+.card{
+    display: "flex";
+    gap : 10px;
+
+}
+
+.card img {
+    width: 100px;
+}
+
+.card > div{
+    /* border: 1px solid black; */
+}
