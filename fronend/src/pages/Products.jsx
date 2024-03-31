@@ -5,7 +5,7 @@ import Error from "../components/Error";
 import ProductCard from "../components/ProductCard";
 import styles from "./products.module.css";
 import { useSearchParams } from "react-router-dom";
-
+import { Select, Box, Button } from "@chakra-ui/react";
 export function productReducer(prevState, { type, payload }) {
   switch (type) {
     case "Loading":
@@ -37,11 +37,14 @@ const Products = () => {
   const [category, setCategory] = useState(
     searchParam.get("category") || "all"
   );
+  const [price, setPrice] = useState("");
+  // console.log(price);
   // console.log(searchParam.get("category"));
   async function getData() {
-    const endpoint =
+    let endpoint =
       category === "all" ? "/products" : `/products?category=${category}`;
 
+    console.log(endpoint);
     dispatch({
       type: "Loading",
     });
@@ -50,9 +53,17 @@ const Products = () => {
         `${import.meta.env.VITE_BASE_URL}${endpoint}`
       );
 
+      const sortedData = data.sort((a, b) => {
+        if (price === "asc") {
+          return a.price - b.price;
+        } else {
+          return b.price - a.price;
+        }
+      });
+
       dispatch({
         type: "Success",
-        payload: data,
+        payload: sortedData,
       });
     } catch (error) {
       console.log(error);
@@ -70,8 +81,8 @@ const Products = () => {
       newSearchParam.set("category", category);
       return newSearchParam;
     });
-    getData(category);
-  }, [category]);
+    getData();
+  }, [category, price]);
 
   const { data, loading, error } = state;
   // console.log(data);
@@ -86,18 +97,38 @@ const Products = () => {
 
   return (
     <>
-      <select value={category} onChange={(e) => setCategory(e.target.value)}>
-        <option value="all">All</option>
-        <option value="mens-clothing">mens-clothing</option>
-        <option value="jewelery">jewelery</option>
-        <option value="electronics">electronics</option>
-        <option value="womens-clothing">womens-clothing</option>
-      </select>
-      <div className={styles.grid}>
+      {/* category */}
+      <Box p={5}   display={"flex"} m={"auto"} w={"80%"} gap="10px">
+        <Select m={"auto"}
+          w={"20%"}
+          
+          value={category}
+          onChange={(e) => setCategory(e.target.value)}
+        >
+          <option value="all">All</option>
+          <option value="mens-clothing">mens-clothing</option>
+          <option value="jewelery">jewelery</option>
+          <option value="electronics">electronics</option>
+          <option value="womens-clothing">womens-clothing</option>
+        </Select>
+        {/* price */}
+        <Select
+         m={"auto"}
+          w={"20%"}
+         
+          value={price}
+          onChange={(e) => setPrice(e.target.value)}
+        >
+          <option value="--">Price</option>
+          <option value="asc">Low to High</option>
+          <option value="desc">High to Low</option>
+        </Select>
+      </Box>
+      <Box p={10} className={styles.grid}>
         {data.map((el) => (
           <ProductCard key={el.id} {...el} />
         ))}
-      </div>
+      </Box>
       ;
     </>
   );

@@ -5,7 +5,7 @@ import Loading from "../components/Loading";
 import Error from "../components/Error";
 import { productReducer } from "./Products";
 import styles from './productPage.module.css'
-
+import {Heading, Box, Text, Button } from "@chakra-ui/react"
 const ProductPage = () => {
   const { product_id } = useParams();
   const [state, dispatch] = useReducer(productReducer, {
@@ -51,16 +51,17 @@ const ProductPage = () => {
     return <Error />;
   }
 
-  return <div className={styles.flex}>
-    <div><img src={image} alt={title} /></div>
-    <div>
-      <h3>{title}</h3>
-      <h3>Rating:{rating?.rate}</h3>
-      <h3>Price:{price}</h3>
-      <p>{description}</p>
-      <button>BUY ITEM</button>
-    </div>
-  </div>;
+  return <Box p={10} className={styles.flex}>
+    <Box><img src={image} alt={title} /></Box>
+    <Box p={5}>
+      <Heading>{title}</Heading>
+      <Heading>Rating:{rating?.rate}</Heading>
+      <Heading>Price:{price}</Heading>
+      <Text>{description}</Text>
+      <br />
+      <Button>BUY ITEM</Button>
+    </Box>
+  </Box>;
 };
 
 export default ProductPage;
