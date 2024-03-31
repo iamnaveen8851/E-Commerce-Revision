@@ -1,9 +1,9 @@
 import React, { useEffect, useReducer, useState } from "react";
 import axios from "axios";
-import Loading from '../components/Loading';
-import Error from '../components/Error';
+import Loading from "../components/Loading";
+import Error from "../components/Error";
 import ProductCard from "../components/ProductCard";
-import styles from './products.module.css'
+import styles from "./products.module.css";
 import { useSearchParams } from "react-router-dom";
 
 export function productReducer(prevState, { type, payload }) {
@@ -33,12 +33,15 @@ const Products = () => {
     data: [],
   });
 
-  const [category, setCategory] = useState("all")
-const [searchParam, setSearchParam] = useSearchParams()
-
+  const [searchParam, setSearchParam] = useSearchParams();
+  const [category, setCategory] = useState(
+    searchParam.get("category") || "all"
+  );
+  // console.log(searchParam.get("category"));
   async function getData() {
-    const endpoint = category === "all" ? "/products" : `/products?category=${category}`;
-   
+    const endpoint =
+      category === "all" ? "/products" : `/products?category=${category}`;
+
     dispatch({
       type: "Loading",
     });
@@ -51,8 +54,6 @@ const [searchParam, setSearchParam] = useSearchParams()
         type: "Success",
         payload: data,
       });
-
-     
     } catch (error) {
       console.log(error);
       dispatch({
@@ -62,47 +63,44 @@ const [searchParam, setSearchParam] = useSearchParams()
   }
 
   useEffect(() => {
-setSearchParam((prevSearchParam)=>{
-  const newSearchParam = new URLSearchParams(prevSearchParam)
-  // console.log(newSearchParam);
-  
-  newSearchParam.set("category", category)
-  return newSearchParam
-})
+    setSearchParam((prevSearchParam) => {
+      const newSearchParam = new URLSearchParams(prevSearchParam);
+      // console.log(newSearchParam);
+
+      newSearchParam.set("category", category);
+      return newSearchParam;
+    });
     getData(category);
   }, [category]);
 
-  const {data, loading, error} = state
+  const { data, loading, error } = state;
   // console.log(data);
 
-  if(loading){
-    return <Loading/>
-  }
-  
-
-  if(error){
-    return <Error/>
+  if (loading) {
+    return <Loading />;
   }
 
+  if (error) {
+    return <Error />;
+  }
 
   return (
     <>
-    <select value={category} onChange={(e)=> setCategory(e.target.value)}>
-      <option value="all">All</option>
-      <option value="mens-clothing">mens-clothing</option>
-      <option value="jewelery">jewelery</option>
-      <option value="electronics">electronics</option>
-      <option value="womens-clothing">womens-clothing</option>
-    </select>
-    <div className={styles.grid}>
-    
-    {data.map(el=> (
-      <ProductCard key={el.id} {...el}/>
-    ))}
-    
-    </div>;
+      <select value={category} onChange={(e) => setCategory(e.target.value)}>
+        <option value="all">All</option>
+        <option value="mens-clothing">mens-clothing</option>
+        <option value="jewelery">jewelery</option>
+        <option value="electronics">electronics</option>
+        <option value="womens-clothing">womens-clothing</option>
+      </select>
+      <div className={styles.grid}>
+        {data.map((el) => (
+          <ProductCard key={el.id} {...el} />
+        ))}
+      </div>
+      ;
     </>
-  )
+  );
 };
 
 export default Products;

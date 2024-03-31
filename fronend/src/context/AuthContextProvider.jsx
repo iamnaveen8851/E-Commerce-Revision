@@ -5,7 +5,7 @@ export const AuthContext = createContext()
 const AuthContextProvider = ({children}) => {
 const [authState, setAuthState] = useState({
     token : null,
-    isAuth : true
+    isAuth : false
 })
 
 const login = (token)=>{
