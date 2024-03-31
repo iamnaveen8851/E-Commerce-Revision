@@ -1,9 +1,10 @@
-import React, { useEffect, useReducer } from "react";
+import React, { useEffect, useReducer, useState } from "react";
 import axios from "axios";
 import Loading from '../components/Loading';
 import Error from '../components/Error';
 import ProductCard from "../components/ProductCard";
 import styles from './products.module.css'
+import { useSearchParams } from "react-router-dom";
 
 export function productReducer(prevState, { type, payload }) {
   switch (type) {
@@ -32,17 +33,18 @@ const Products = () => {
     data: [],
   });
 
-  useEffect(() => {
-    getData();
-  }, []);
+  const [category, setCategory] = useState("all")
+const [searchParam, setSearchParam] = useSearchParams()
 
   async function getData() {
+    const endpoint = category === "all" ? "/products" : `/products?category=${category}`;
+   
     dispatch({
       type: "Loading",
     });
     try {
       let { data } = await axios.get(
-        `${import.meta.env.VITE_BASE_URL}/products`
+        `${import.meta.env.VITE_BASE_URL}${endpoint}`
       );
 
       dispatch({
@@ -59,6 +61,17 @@ const Products = () => {
     }
   }
 
+  useEffect(() => {
+setSearchParam((prevSearchParam)=>{
+  const newSearchParam = new URLSearchParams(prevSearchParam)
+  // console.log(newSearchParam);
+  
+  newSearchParam.set("category", category)
+  return newSearchParam
+})
+    getData(category);
+  }, [category]);
+
   const {data, loading, error} = state
   // console.log(data);
 
@@ -72,13 +85,24 @@ const Products = () => {
   }
 
 
-  return <div className={styles.grid}>
+  return (
+    <>
+    <select value={category} onChange={(e)=> setCategory(e.target.value)}>
+      <option value="all">All</option>
+      <option value="mens-clothing">mens-clothing</option>
+      <option value="jewelery">jewelery</option>
+      <option value="electronics">electronics</option>
+      <option value="womens-clothing">womens-clothing</option>
+    </select>
+    <div className={styles.grid}>
     
     {data.map(el=> (
       <ProductCard key={el.id} {...el}/>
     ))}
     
     </div>;
+    </>
+  )
 };
 
 export default Products;
