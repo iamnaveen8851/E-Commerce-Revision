@@ -4,6 +4,7 @@ import Loading from "../components/Loading";
 import Error from "../components/Error";
 import { AuthContext } from "../context/AuthContextProvider";
 import { useNavigate } from "react-router-dom";
+import { Input, Table, Tbody, Tr, Box, Text } from "@chakra-ui/react";
 function reducer(state, { type, payload }) {
   switch (type) {
     case "email":
@@ -37,10 +38,9 @@ const Login = () => {
     error: false,
   });
 
-
-  const {login} = useContext(AuthContext)
-  const navigate = useNavigate()
-  const {loading, error, email, password} = state
+  const { login } = useContext(AuthContext);
+  const navigate = useNavigate();
+  const { loading, error, email, password } = state;
 
   async function handleSubmit(e) {
     e.preventDefault();
@@ -62,64 +62,50 @@ const Login = () => {
         type: "success",
       });
 
-      login(res.data.token)
-      navigate("/")
+      login(res.data.token);
+      navigate("/");
     } catch (error) {
       dispatch({
-        type : "error"
-      })
+        type: "error",
+      });
     }
   }
 
-  if(loading){
-    return <Loading/>
+  if (loading) {
+    return <Loading />;
   }
 
-  if(error){
-    return <Error/>
+  if (error) {
+    return <Error />;
   }
   return (
-    <form onSubmit={handleSubmit}>
-      <table>
-        <tbody>
-          <tr>
-            <td>Email</td>
-            <td>
-              <input
-                type="text"
-                value={email}
-                onChange={(e) =>
-                  dispatch({
-                    type: "email",
-                    payload: e.target.value,
-                  })
-                }
-              />
-            </td>
-          </tr>
-          <tr>
-            <td>Password</td>
-            <td>
-              <input
-                type="text"
-                value={password}
-                onChange={(e) =>
-                  dispatch({
-                    type: "password",
-                    payload: e.target.value,
-                  })
-                }
-              />
-            </td>
-          </tr>
-          <tr>
-            <td>
-              <input type="submit" />
-            </td>
-          </tr>
-        </tbody>
-      </table>
-    </form>
+    <Box>
+      <form onSubmit={handleSubmit}>
+        <Text>Email</Text>
+        <Input
+          type="text"
+          value={email}
+          onChange={(e) =>
+            dispatch({
+              type: "email",
+              payload: e.target.value,
+            })
+          }
+        />
+        <Text>Password</Text>
+        <Input
+          type="text"
+          value={password}
+          onChange={(e) =>
+            dispatch({
+              type: "password",
+              payload: e.target.value,
+            })
+          }
+        />
+        <Input type="submit" />
+      </form>
+    </Box>
   );
 };
 
